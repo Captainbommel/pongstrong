@@ -4,7 +4,7 @@ It is not really useful for anything else. There is actually no way to change ho
 The only input parameters are the players which need to already be ordered in groups of a predetermined number. 
 
 # Obvious Problems
-  - all the code is in one 1000 line file
+  - all the code is in one 1500 line file
   - progress is only saved every few minutes
   - it runs in a single container 
   - almost zero documentation
