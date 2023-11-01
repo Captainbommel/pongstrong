@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PongStrong - Controlpanel</title>
+  <style>
+    form {
+      width: 300px; height: fit-content;
+      background-color: coral;
+      border: solid black;
+      border-radius: 18px;
+      padding: 20px;
+      margin: 7px;
+      text-align: center;
+      margin: auto; margin-top: 8px;
+    }
+    form input {
+      font-size: 16px;
+      margin: 8px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    div {
+      width: 330px;
+      background-color: white;
+      color: red;
+      border: solid red;
+      margin: auto; margin-top: 8px;
+      font-size: xx-large;
+      border-radius: 18px;
+      padding: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  {{if .}}
+  <div>{{.}}</div>
+  {{end}}
+
+  <form action="/controlpanel" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="type" value="upload">
+    <label for="key">key:</label>
+    <input type="password" name="key"><br><br>
+    <input type="file" name="gruppen" id="file">
+    <input type="submit" value="Gruppen hochladen">
+  </form>
+
+  <form action="/controlpanel" method="POST">
+    <input type="hidden" name="type" value="update">
+    <label for="key">key:</label>
+    <input type="password" name="key"><br><br>
+    <label for="matchid">Match ID</label><br>
+    <input type="text" name="matchid"><br>
+    ("g35", "c81", "e44", "f11", "s2" ...)<br><br>
+    <label for="new1">Neue Becher Team 1</label><br>
+    <input type="number" name="new1"> <br>
+    <label for="new2">Neue Becher Team 2</label><br>
+    <input type="number" name="new2"><br>    
+    <input type="submit" value="score ändern">
+  </form>
+
+  <form action="/controlpanel" method="POST">
+    <input type="hidden" name="type" value="evaluate">
+    <label for="key">key:</label>
+    <input type="password" name="key"><br> 
+    <label for="ignorequeue">Warteschlange ignorieren</label>
+    <input type="checkbox" name="ignorequeue"><br><br>
+    <input type="submit" value="starte Knockouts">
+  </form>
+
+  <form action="/controlpanel" method="POST">
+    <input type="hidden" name="type" value="reset">
+    <label for="key">key:</label>
+    <input type="password" name="key"><br><br>
+    <label for="keepgroups">Gruppen beibehalten</label>
+    <input type="checkbox" name="keepgroups"><br><br>
+    <label for="confirmation">Ich bin sicher</label>
+    <input type="checkbox" name="confirmation"><br><br>
+    <input type="submit" value="Turnier zurücksetzen"><br>
+    (diese Funktion ist nicht unbedingt aktiviert)
+  </form>
+
+  <form action="/controlpanel" method="POST">
+    <input type="hidden" name="type" value="backup">
+    <label for="key">key:</label>
+    <input type="password" name="key"><br><br>
+    <input type="submit" value="backup erstellen"><br>
+  </form>
+</body>
+</html>

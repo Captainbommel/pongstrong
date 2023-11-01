@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PongStrong - Gruppenphase </title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    html, body { 
+      width: 100%; height: 100%;
+      font-family: 'Noto Sans Mono', monospace;
+      background-color: rgba(169, 216, 255, 0.94);
+      margin: 0; 
+      text-align: center;
+    }
+    .navbar {
+      background-color: white;
+      width: 100%; height: 25px;
+      padding: 10px 0 10px 0;
+      display: flex; align-items: center;
+      box-shadow: 0 5px 13px;
+      margin-bottom: 20px;
+    }
+    .navbar a { color: black; font-size: large; margin: 8px; }
+
+    .groups { width: 100%; height: 100%; text-align: center;}
+    h3 { margin: 10px; text-align: center;}
+    .group {
+      width: 500px; height: 1250px;
+      border-radius: 20px; border: solid rgb(189, 40, 70) 4px;
+      background-color: cornsilk; 
+      padding: 10px;
+      margin: 10px;
+      display: inline-block; position: relative;
+    }
+    .finnished {
+      font-size: x-large; text-align: center; color: rgb(180, 70, 130);
+      writing-mode: vertical-rl; rotate: 180deg;
+    }
+    @media only screen and (max-width: 560px) {
+      .group { width: 85%; height: fit-content; }
+    }
+    .match {
+      background-color: white;
+      padding: 12px; margin: 10px; height: 12.4%;
+      border-radius: 15px; border: solid black 3px;
+      display: grid; grid-template-columns: 40% 40% 20%;
+      word-wrap: break-word;
+    }
+    .team {
+      padding: 5px;
+      border-left: rgb(180, 70, 130) dashed 2px;
+    }
+    .ti_number { display: flex; align-items: center; justify-content: center; position: relative; }
+    .t1::after, .t2::after, .t3::after, .t4::after, .t5::after, .t6::after, .t7::after {
+      width: 58px; height: 58px; border-radius: 50%;
+      font-size: 40px; text-align: center; 
+    }
+    .t1::after { background-color: rgb(208, 157, 28); content: "1"; }
+    .t2::after { background-color: rgb(192, 47, 184); content: "2"; }
+    .t3::after { background-color: rgb(99, 160, 93); content: "3"; }
+    .t4::after { background-color: rgb(28, 67, 151); content: "4"; }
+    .t5::after { background-color: rgb(222, 97, 14); content: "5"; }
+    .t6::after { background-color: rgb(32, 218, 209); content: "6"; }
+    .t7::after { background-color: rgb(142, 105, 205); content: "7"; }
+    .select {
+      padding: 10px;
+      border-radius: 20px; border: solid rgb(189, 40, 70) 4px;
+      display: inline-block; position: relative;
+      background-color: cornsilk;
+    }
+    #groupNo {
+      width: 30px; 
+      display: inline-block; position: relative;
+      bottom: 1px;
+    }
+    #btn_all {
+      background-color: rgb(255, 255, 255);
+      border: solid rgb(189, 40, 70) 2.2px; border-radius: 5px;
+      font-family: inherit;
+    }
+    #btn_all:hover {
+      opacity: 85%;
+    }
+    #btn_all:active {
+      opacity: 100%;
+      border-color: rgb(128, 35, 54)
+    }
+  </style>
+  <script>
+    function showGroup(n) {
+      const groups = document.getElementsByClassName("group");
+      for (let i = 0; i < groups.length; i++) {
+        groups[i].style.display = "none";
+      }
+      if (n > groups.length) {return}
+      groups[n-1].style.display = "inline-block";
+    }
+    function saveSelection(n) {
+      var xhr = new XMLHttpRequest();
+      let data = new FormData(document.getElementById("select"));
+      xhr.open("POST", "/übersicht", true);
+      xhr.send(data);
+    }
+    function shaveGroup(n) {
+      showGroup(n);
+      saveSelection(n);
+    }
+    function showAll() {
+      const groups = document.getElementsByClassName("group");
+      for (let i = 0; i < groups.length; i++) {
+        groups[i].style.display = "inline-block";
+      }
+      document.getElementById("groupNo").value = ""
+      let data = new FormData()
+      var xhr = new XMLHttpRequest(); 
+      data.append("groupNo", 0)
+      xhr.open("POST", "/übersicht", true);
+      xhr.send(data);
+    }
+  </script>
+</head>
+<body>
+    <div class="navbar">
+      <a href="/spielfeld">Spielfeld</a>
+      <a href="/übersicht">Gruppen</a>
+      <a href="/turnierbaum">Knockout</a>
+      <a href="/regeln">Regeln</a>
+    </div>
+
+    <form class="select" id="select">
+      Zeige Gruppe:
+      <input type="number" id="groupNo" name="groupNo" value="{{.Selection}}" min="1" max="{{len .Gruppen}}" onchange="shaveGroup(this.value)">
+      <button type="button" id="btn_all" onclick="showAll()">Alle</button>
+    </form>
+
+    <div class="groups">
+      {{range $index, $element := .Gruppen}}
+        <div class="group" >
+          <h3>--- Gruppe {{len (printf "a%*s" $index "")}} ---</h3>
+          {{range .}}
+            <div class="match">
+              <div class="team">
+                <p><span style="color: steelblue;"></span> {{.Team1.Name}} </p>
+                <p><span style="color: steelblue;">Mitglieder: </span>{{.Team1.Mem1}}, {{.Team1.Mem2}}</p>
+              </div>
+              <div class="team">
+                <p><span style="color: steelblue;;"></span>{{.Team2.Name}}</p>
+                <p><span style="color: steelblue;">Mitglieder: </span>{{.Team2.Mem1}}, {{.Team2.Mem2}}</p>
+              </div>
+              {{if .Done}}
+                <div class="ti_number finnished">Ergebnis: <br>{{if eq .Score1 -1}} D {{else if eq .Score1 -2}} DV {{else}} {{.Score1}} {{end}} - {{if eq .Score2 -1}} D {{else if eq .Score2 -2}} DV {{else}} {{.Score2}} {{end}}</div>
+                {{else}}
+                <div class="ti_number t{{.TischNr}}"></div>
+              {{end}}
+            </div>
+          {{end}}
+        </div>
+      {{end}}
+    </div>
+    <script>
+      if ({{.Selection}} != 0) {
+        showGroup({{.Selection}})
+      }
+    </script>
+</body>
+</html>

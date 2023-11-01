@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=0.8">
+  <title>PongStrong - Turnierbaum</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      width: 100%; height: 100%;
+      font-family: 'Noto Sans Mono', monospace;
+      background-color: rgba(169, 216, 255, 0.94);
+      margin: 0;
+      text-align: center;
+    }
+
+    .navbar {
+      width: 100%; height: 25px;
+      background-color: white;
+      padding: 10px 0 10px 0;
+      display: flex; align-items: center;
+      box-shadow: 0 5px 13px;
+      margin-bottom: 20px;
+    }
+    .navbar a { color: black; font-size: large; margin: 8px; }
+
+    .champ, .euro, .conf, .super {
+      border-radius: 20px;
+      display: inline-block; background-color: cornsilk;
+      width: 95%;
+      margin-bottom: 12px;
+    }
+    @media only screen and (max-width: 700px) {
+      .champ, .euro, .conf, .super { width: 680px; margin: 5px; }
+      .navbar { width: 700px; }
+    }
+    .champ { height: 1200px; border: solid rebeccapurple 5px; }
+    .euro { height:   700px; border: solid royalblue 5px;}
+    .conf { height:   700px; border: solid yellowgreen 5px;}
+    .super { height:   280px; border: solid hotpink 5px;}
+    .match{
+      border: solid black 2.5px; border-radius: 10px;
+      background-color: white;
+      overflow: hidden; height: fit-content;
+      font-size: 18px;
+    }
+    .wrapper {
+      width: 100%; height: 98.7%;
+      display: grid; margin: 5px;
+    }
+    .c01 { grid-area: ca1; } .c02 { grid-area: ca2; } .c03 { grid-area: ca3; } .c04 { grid-area: ca4; }
+    .c05 { grid-area: ca5; } .c06 { grid-area: ca6; } .c07 { grid-area: ca7; } .c08 { grid-area: ca8; }
+    .c11 { grid-area: cb1; } .c12 { grid-area: cb2; } .c13 { grid-area: cb3; } .c14 { grid-area: cb4; }
+    .c21 { grid-area: cc1; } .c22 { grid-area: cc2; }
+    .c31 { grid-area: cd1; box-shadow: 0 0 20px rebeccapurple; }
+    .l1 { grid-area: l1; font-size: 35px; text-shadow: 2px 2px 3px rebeccapurple; text-align: end;}
+    .champ .wrapper {
+      grid-template-columns: repeat(4, 24.7%);
+      grid-template-areas:
+      "ca1 . l1 l1"
+      ". cb1 . ."
+      "ca2 . . ."
+      ". . cc1 ."
+      "ca3 . . ."
+      "t2 cb2 . ."
+      "ca4 . . ."
+      ". . . cd1"
+      "ca5 . . ."
+      "t3 cb3 . ."
+      "ca6 . . ."
+      ". . cc2 ."
+      "ca7 . . ."
+      "t4 cb4 . ."
+      "ca8 . . ."
+    }
+    .e01 { grid-area: eb1; } .e02 { grid-area: eb2; } .e03 { grid-area: eb3; } .e04 { grid-area: eb4; }
+    .e11 { grid-area: ec1; } .e12 { grid-area: ec2; }
+    .e21 { grid-area: ed1; box-shadow: 0 0 10px royalblue; }
+    .l2 { grid-area: l2; font-size: 30px; text-shadow: 2px 2px 3px royalblue; text-align: end;}
+    .euro .wrapper {
+      grid-template-columns: repeat(3, 32.9%);
+      grid-template-areas:
+      "eb1 l2 l2"
+      ". ec1 ."
+      "eb2 . ."
+      ". . ed1"
+      "eb3 . ."
+      ". ec2 ."
+      "eb4 . ."
+    }
+    .f01 { grid-area: fb1; } .f02 { grid-area: fb2; } .f03 { grid-area: fb3; } .f04 { grid-area: fb4; }
+    .f11 { grid-area: fc1; } .f12 { grid-area: fc2; }
+    .f21 { grid-area: fd1; box-shadow: 0 0 10px yellowgreen; }
+    .l3 { grid-area: l3; font-size: 27px; text-shadow: 1px 1px 5px yellowgreen; text-align: end;}
+    .conf .wrapper {
+      grid-template-columns: repeat(3, 32.9%);
+      grid-template-areas:
+      "fb1 l3 l3"
+      ". fc1 ."
+      "fb2 . ."
+      ". . fd1"
+      "fb3 . ."
+      ". fc2 ."
+      "fb4 . ."
+    }
+    .s0 { grid-area: s1; } .s1 { grid-area: s2; box-shadow: 0 0 10px hotpink; }
+    .l4 { grid-area: l4; font-size: 27px; text-shadow: 1px 1px 5px hotpink; text-align: center;}
+    .super .wrapper {
+      grid-template-columns: repeat(5, 19.9%);
+      grid-template-areas:
+      ". . l4 . ."
+      ". s1 . s2 ."
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <a href="/spielfeld">Spielfeld</a>
+    <a href="/übersicht">Gruppen</a>
+    <a href="/turnierbaum">Knockout</a>
+    <a href="/regeln">Regeln</a>
+  </div>
+
+  <div class="champ">
+    <div class="wrapper">
+      <div class="l1">Champions League&nbsp</div>
+      {{range $i, $element := .Champions}}
+        {{range $j, $element := .}}
+          {{if and (eq .Team1.Name "") (eq .Team2.Name "")}}
+            <div class="match c{{ $i }}{{ len (printf "a%*s" $j "") }}">
+              <div style="color: rebeccapurple;">Match</div>
+            </div>
+          {{else}}
+            <div class="match c{{ $i }}{{ len (printf "a%*s" $j "") }}">
+              <div>{{.Team1.Name}}</div>
+              {{if and (eq .Score1 0) (eq .Score2 0)}}
+                <div class="purp">versus</div>
+              {{else}}
+                <div class="purp score">{{if eq .Score1 -1}} D {{else if eq .Score1 -2}} DV {{else}} {{.Score1}} {{end}} - {{if eq .Score2 -1}} D {{else if eq .Score2 -2}} DV {{else}} {{.Score2}} {{end}}</div>
+              {{end}}
+              <div>{{.Team2.Name}}</div>
+            </div>
+          {{end}}
+        {{end}}
+      {{end}}
+    </div>
+  </div>
+
+  <div class="euro">
+    <div class="wrapper">
+      <div class="l2">Europa League&nbsp</div>
+        {{range $i, $element := .Europa}}
+          {{range $j, $element := .}}
+            {{if and (eq .Team1.Name "") (eq .Team2.Name "")}}
+              <div class="match e{{ $i }}{{ len (printf "a%*s" $j "") }}">
+                <div style="color: royalblue;">Match</div>
+              </div>
+            {{else}}
+              <div class="match e{{ $i }}{{ len (printf "a%*s" $j "") }}">
+                <div>{{.Team1.Name}}</div>
+                {{if and (eq .Score1 0) (eq .Score2 0)}}
+                  <div class="purp">versus</div>
+                {{else}}
+                <div class="purp score">{{if eq .Score1 -1}} D {{else if eq .Score1 -2}} DV {{else}} {{.Score1}} {{end}} - {{if eq .Score2 -1}} D {{else if eq .Score2 -2}} DV {{else}} {{.Score2}} {{end}}</div>
+                {{end}}
+                <div>{{.Team2.Name}}</div>
+              </div>
+            {{end}}
+          {{end}}
+        {{end}}
+    </div>
+  </div>
+
+  <div class="conf">
+    <div class="wrapper">
+      <div class="l3">Conference League&nbsp</div>
+        {{range $i, $element := .Conference}}
+          {{range $j, $element := .}}
+            {{if and (eq .Team1.Name "") (eq .Team2.Name "")}}
+              <div class="match f{{ $i }}{{ len (printf "a%*s" $j "") }}">
+                <div style="color: yellowgreen;">Match</div>
+              </div>
+            {{else}}
+              <div class="match f{{ $i }}{{ len (printf "a%*s" $j "") }}">
+                <div>{{.Team1.Name}}</div>
+                {{if and (eq .Score1 0) (eq .Score2 0)}}
+                  <div class="purp">versus</div>
+                {{else}}
+                <div class="purp score">{{if eq .Score1 -1}} D {{else if eq .Score1 -2}} DV {{else}} {{.Score1}} {{end}} - {{if eq .Score2 -1}} D {{else if eq .Score2 -2}} DV {{else}} {{.Score2}} {{end}}</div>
+                {{end}}
+                <div>{{.Team2.Name}}</div>
+              </div>
+            {{end}}
+          {{end}}
+        {{end}}
+    </div>
+  </div>
+
+  <div class="super">
+    <div class="wrapper">
+      <div class="l4">Super-Cup&nbsp</div>
+        {{range $i, $element := .Super}}
+          {{if and (eq .Team1.Name "") (eq .Team2.Name "")}}
+            <div class="match s{{ $i }}">
+              <div style="color: hotpink;">Match</div>
+            </div>
+          {{else}}
+            <div class="match s{{ $i }}">
+              <div>{{.Team1.Name}}</div>
+              {{if and (eq .Score1 0) (eq .Score2 0)}}
+                <div class="purp">versus</div>
+              {{else}}
+              <div class="purp score">{{if eq .Score1 -1}} D {{else if eq .Score1 -2}} DV {{else}} {{.Score1}} {{end}} - {{if eq .Score2 -1}} D {{else if eq .Score2 -2}} DV {{else}} {{.Score2}} {{end}}</div>
+              {{end}}
+              <div>{{.Team2.Name}}</div>
+            </div>
+          {{end}}
+        {{end}}
+    </div>
+  </div>
+</body>
+</html>

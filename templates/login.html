@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PongStrong - Login </title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@400&display=swap" rel="stylesheet">
+
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      background-color: white;
+      font-family: 'Noto Sans Mono', monospace;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loginform {
+      width: 300px; height: 125px;
+      border-radius: 16px;
+      border: dashed rgb(213, 35, 70) 6px;
+      background-color: cornsilk;
+      padding: 25px;
+      text-align: center;
+      position: relative;
+    }
+
+    .loginform label,
+    .loginform input {
+      font-size: 1.4rem;
+    }
+
+    .loginform input {
+      width: 220px; height: 1.4rem;
+      border-radius: 5px;
+      border: solid rgb(213, 35, 70) 3px;
+      margin: 12px;
+    }
+
+    .loginform input:focus {
+      outline: solid rgb(251, 131, 155) 2px
+    }
+
+    .info {
+      color: darkred;
+    }
+  </style>
+</head>
+
+<body>
+  <form action="/login" method="POST" class="loginform">
+    <label for="password">bitte Passwort eingeben</label>
+    <input type="password" id="passswordID" name="password">
+    <div class="info">{{if .}} {{.}} {{end}}</div>
+  </form>
+</body>
+
+<!-- <script>
+  function cookieAgreement(txt) {
+    if (confirm(txt)) {
+      // great
+    } else {
+      cookieAgreement("Keks oder das Erbe, deine Entscheidung")
+    }
+    document.getElementById("demo").innerHTML = txt;
+  }
+  cookieAgreement("ja du willst noch einen Keks - Oma")
+</script> -->
+
+</html>

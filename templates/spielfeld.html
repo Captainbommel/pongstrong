@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PongStrong - Spielfeld</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@400&display=swap" rel="stylesheet">
+
+  <style>
+    html, body { 
+      width: 100%; height: 100%; 
+      margin: 0; 
+      font-family: 'Noto Sans Mono', monospace; 
+      overflow-wrap: break-word;
+      text-align: center;
+    }
+
+    .navbar {
+      background-color: white;
+      width: 100vw; height: 25px;
+      padding: 10px 0 10px 0;
+      box-shadow: 0 5px 13px;
+      margin-bottom: 10px;
+      display: flex; align-items: center;
+    }
+    .navbar a {color: black; font-size: large; margin: 8px; }
+
+    /*The Grid*/
+    .playing { grid-area: a; background-color: tomato; }
+    .upnext { grid-area: b; background-color: springgreen; }
+    .tables { grid-area: c; background-color: skyblue; }
+    .grid .playing, .upnext, .tables { 
+      margin: 5px;
+      border-radius: 20px;  border: solid 5px black;
+      display: flex; flex-direction: column; align-items: stretch;
+      text-align: center; 
+    }
+    .grid {
+      width: 100%; /*height: 100%;*/
+    top: 60px; bottom: 0;
+	  position: absolute;
+      display: grid;
+      grid-template-columns: repeat(4, 25%);
+      grid-template-areas: 
+      "a a c c"
+      "b b c c";
+    }
+    @media only screen and (max-width: 700px) {
+      .grid {
+        width: 100%; height: auto;
+        grid-template-columns: repeat(1, 100%);
+        grid-template-areas: 
+        "a" "a" "b" "b" "c" "c" "c";
+      }
+    }
+
+    /*inner boxes*/
+    .grid h2 { margin-bottom: 0; text-shadow: 2px 2px 1.5px rgba(0, 0, 0, 0.4);}
+    .display_current, .display_next, .display_tables {
+      background-color: hsla(0, 0%, 50%, 0.25);
+      border-radius: 15px;
+      flex-grow: 1;
+      margin: 2%;
+    }
+
+    /*match elements*/
+    .match {
+      background-color: white; color: black;
+      box-shadow: 3px 3px 2px black;
+      width: 200px; height: 75px; border-radius: 9999px;
+      margin-top: 10px;
+      display: inline-block; position: relative;
+      cursor: pointer;
+    }
+    .match:hover { box-shadow: 6px 6px 1px black; }
+    .display_current { padding: 5px;}
+    .t1::after, .t2::after, .t3::after, .t4::after, .t5::after, .t6::after, .t7::after {
+      width: 50px; height: 50px; border-radius: 50%;
+      position: absolute;
+      font-size: 35px;
+      right: 12px; top: 13px;
+    }
+    .t1::after { background-color: rgb(208, 157, 28); content: "1"; }
+    .t2::after { background-color: rgb(192, 47, 184); content: "2"; }
+    .t3::after { background-color: rgb(99, 160, 93); content: "3"; }
+    .t4::after { background-color: rgb(28, 67, 151); content: "4"; }
+    .t5::after { background-color: rgb(222, 97, 14); content: "5"; }
+    .t6::after { background-color: rgb(32, 218, 209); content: "6"; }
+    .t7::after { background-color: rgb(142, 105, 205); content: "7"; }
+    .match_info {
+      width: 110px; height: fit-content;
+      left: 20px; top: 10px;
+      line-height: 15px;
+      font-size: 14px; font-weight: bolder;
+
+      position: absolute;
+      top: 50%;
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
+      margin: 0;
+    }
+    .t1::before, .t2::before, .t3::before, .t4::before, .t5::before, .t6::before, .t7::before {
+      content: "Vs";
+      font-size: 60px; font-weight: 600; 
+      position: absolute;
+      left: 45px; top: -5px;
+    }
+    .t1::before { color:rgba(208, 157, 28, 0.4); }
+    .t2::before { color:rgba(192, 47, 185, 0.4); }
+    .t3::before { color:rgba(98, 160, 93, 0.4); }
+    .t4::before { color:rgba(28, 67, 151, 0.4); }
+    .t5::before { color:rgba(222, 97, 14, 0.4); }
+    .t6::before { color:rgba(32, 218, 209, 0.4); }
+    .t7::before { color:rgba(142, 105, 205, 0.4); }
+
+    /*tables*/
+    .ptable, .ptable th, .ptable td {
+      border: 2px solid black;
+      border-collapse: collapse;
+    }
+    .ptable th { padding: 2px;}
+    .ptable { margin: 15px; display:inline-table; background-color: white; border: 3px solid black;}
+
+    /*finnish match popup*/
+    .finnMatch {
+      width: 400px; height: 300px;                   
+      border: 15px solid rgb(213, 35, 70); border-radius: 20px;
+      background-color: cornsilk; box-shadow: 0 0 300px;
+      position: absolute;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      text-align: center;
+
+      display: none;
+    }
+    .cups1, .cups2 { width: 48%; height: fit-content; display: inline-block; }
+    .finnMatch input { overflow-wrap: break-word; width: 20%; outline: 1px black;}
+    button[id^="confirm_match"] {
+      width: 200px; height: 40px;
+      background-color: rgb(255, 255, 255); color: black;
+      border-radius: 12px; border: solid rgb(213, 35, 70) 4px;
+      font-family: inherit; font-weight: 500; font-size: 17px;
+      cursor: pointer;
+      margin: 55px;
+    }
+    button[id^="confirm_match"]:hover { 
+      border: solid rgb(189, 40, 70) 4px; 
+      box-shadow: 0 0 5px rgb(189, 40, 70);
+    }
+    button[id^="confirm_match"]:active { 
+      border: solid rgb(189, 40, 70) 4px; 
+      box-shadow: 0 0 20px rgb(189, 40, 70);
+    }
+
+    /*start match popup*/
+    .startMatch {
+      width: 400px; height: 300px;                   
+      border: 15px solid rgb(213, 35, 70); border-radius: 20px;
+      background-color: cornsilk; box-shadow: 0 0 300px;
+      position: absolute;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      text-align: center;
+
+      display: none;
+    }
+    .team1_info, .team2_info { 
+      width: fit-content; height: fit-content; padding: 4px 10px 4px 10px;
+      background-color: white; border: double black 6px;   /* or inset? */
+      display: inline-block;
+      margin: 5px;
+    }
+    button[id^="start_match"] {
+      width: 200px; height: 40px;
+      background-color: rgb(255, 255, 255); color: black;
+      border-radius: 12px; border: solid rgb(213, 35, 70) 4px;
+      font-family: inherit; font-weight: 500; font-size: 17px;
+      cursor: pointer;
+      margin: 45px;
+    }
+    button[id^="start_match"]:hover { 
+      border: solid rgb(189, 40, 70) 4px; 
+      box-shadow: 0 0 5px rgb(189, 40, 70);
+    }
+    button[id^="start_match"]:active { 
+      border: solid rgb(189, 40, 70) 4px; 
+      box-shadow: 0 0 20px rgb(189, 40, 70);
+    }
+
+    @media only screen and (max-width: 700px) {
+      .finnMatch, .startMatch {
+        width: 94vw; 
+      }
+    }
+
+    /*close button in the corner*/
+    .close {
+      position: absolute;
+      right: 7px; top: 7px;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background-color: white;
+      cursor: pointer;
+    }
+    .close:hover { opacity: 0.6; }
+    .close:before, .close:after {
+      content: "";
+      background-color: black;
+      height: 28px; width: 4px;
+      position: absolute;
+      left: 14px;
+    }
+    .close:before { rotate: 45deg; }
+    .close:after { rotate: -45deg; }
+  </style>
+
+  <script>
+    function displayStart(match) {
+      document.getElementsByClassName("startMatch")[0].setAttribute("style", "display: inline-block")
+      document.getElementsByClassName("finnMatch")[0].setAttribute("style", "display: none")
+      let matchInfo = match.children[0]
+      let dataID = ["data-t1n", "data-t1m1", "data-t1m2", "data-t2n", "data-t2m1", "data-t2m2", "data-table"]
+      let data = new Array(7)
+      for (let i = 0; i < 7 ; i++) { data[i] = matchInfo.getAttribute(dataID[i])}
+      document.getElementsByClassName("team1_info")[0].innerHTML = `Team: ${data[0]}<br>Mitglieder: ${data[1]}, ${data[2]}`
+      document.getElementsByClassName("team2_info")[0].innerHTML = `Team: ${data[3]}<br>Mitglieder: ${data[4]}, ${data[5]}`
+      document.getElementsByName("table_id1")[0].setAttribute("value", data[6])
+      document.getElementById("table_id").textContent = data[6]
+    }
+    function displayFinnish(match) {
+      document.getElementsByClassName("finnMatch")[0].setAttribute("style", "display: inline-block")
+      document.getElementsByClassName("startMatch")[0].setAttribute("style", "display: none")
+      let matchInfo = match.children[0]
+      document.getElementsByName("table_id2")[0].setAttribute("value", matchInfo.getAttribute("data-table"))
+      document.getElementById("team1").textContent = matchInfo.getAttribute("data-t1n")
+      document.getElementById("team2").textContent = matchInfo.getAttribute("data-t2n")
+    }
+  </script>
+</head>
+
+<body>
+  <div class="navbar">
+    <a href="/spielfeld">Spielfeld</a>
+    <a href="/übersicht">Gruppen</a>
+    <a href="/turnierbaum">Knockout</a>
+    <a href="/regeln">Regeln</a>
+  </div>
+  <div class="grid">
+    <div class="playing">
+      <h2>Laufende Spiele</h2> 
+      <div class="display_current">
+
+        {{range .Matches}}
+          <div class="match t{{.TischNr}}" onclick="displayFinnish(this)"> 
+            <div class="match_info" data-t1n="{{.Team1.Name}}" data-t1m1="{{.Team1.Mem1}}" data-t1m2="{{.Team1.Mem2}}"
+            data-t2n="{{.Team2.Name}}" data-t2m1="{{.Team2.Mem1}}" data-t2m2="{{.Team2.Mem2}}" data-table="{{.TischNr}}">
+              {{.Team1.Name}}<br><br>
+              {{.Team2.Name}}
+            </div> 
+          </div>
+        {{end}}
+
+      </div>
+    </div>
+
+    <div class="upnext">
+      <h2>Die Nächsten Spiele</h2>
+      <div class="display_next">
+
+        {{range .NextMatches}}
+          <div class="match t{{.TischNr}}" onclick="displayStart(this)"> 
+            <div class="match_info" data-t1n="{{.Team1.Name}}" data-t1m1="{{.Team1.Mem1}}" data-t1m2="{{.Team1.Mem2}}"
+            data-t2n="{{.Team2.Name}}" data-t2m1="{{.Team2.Mem1}}" data-t2m2="{{.Team2.Mem2}}" data-table="{{.TischNr}}">
+              {{.Team1.Name}}<br><br>
+              {{.Team2.Name}}
+            </div> 
+          </div>
+        {{end}}
+
+        {{range .NextNextMatches}}
+          <div class="match t{{.TischNr}}" style="opacity: 0.5;"> 
+            <div class="match_info">
+              {{.Team1.Name}}<br><br>
+              {{.Team2.Name}}
+            </div> 
+          </div>
+        {{end}}
+
+      </div>
+    </div>
+
+    <div class="tables">
+      <h2>Aktuelle Tabelle</h2>
+      <div class="display_tables">
+        {{range $index, $element := .Tabellen}}
+          <table class="ptable">
+            <tr>
+              <th>Gruppe {{ len (printf "a%*s" $index "") }}</th> <td>Punkte</td> <td>Diff.</td> <td>Becher</td>
+            </tr>
+            {{range .}}
+              <tr>
+                <td>{{.Team.Name}}</td> <td>{{.Punkte}}</td> <td>{{.Differenz}}</td> <td>{{.Becher}}</td>
+              </tr>
+            {{end}}
+          </table>
+        {{end}}
+      </div>
+    </div>
+  </div>
+
+  <div class="startMatch">
+    <a class="close" href="/spielfeld"></a>
+    <div class="team1_info"></div>
+    <div class="team2_info"></div>
+    <p class="table_id"> Tisch: <span style="color: rgb(213, 35, 70); font-weight: bold;" id="table_id"></span></p>
+    <form action="/spielfeld" method="POST">
+      <input type="hidden" name="mode" value="start">
+      <input type="hidden" name="table_id1">
+      <button id="start_match">Spiel starten</button>
+    </form>
+  </div>
+
+  <div class="finnMatch">
+    <form id="scores" method="POST">
+      <input type="hidden" name="mode" value="finnish">
+      <input type="hidden" name="table_id2">
+      <a class="close" href="/spielfeld"></a>
+      <h2>Ergebnis eintragen</h2><br>
+      <div class="cups1">
+        <label for="team1" id="team1"></label><br>
+        <input type="number" name="cupsTeam1" min="-2" value="0"> 
+      </div>
+      <div class="cups2">
+        <label for="team2" id="team2"></label><br>
+        <input type="number" name="cupsTeam2" min="-2" value="0"> 
+      </div>
+      <button id="confirm_match">Spiel abschließen</button>
+    </form>
+  </div>
+</body>
+</html>
